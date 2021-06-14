@@ -1,30 +1,34 @@
 #include <iostream>
+#include <vector>
+#include <array>
+#define NLEDS 100
 
-// https://edabit.com/challenge/s695FkhRd3J65tmdQ
-// A Tour of C++  9.2.1 String implementation 
-//std::string& doubleSwap(std::string& s, char c1, char c2){
-//    /*Write a function to replace all instances of character c1 with character c2 and vice versa.*/
-//    for(int i =0; i<s.size(); ++i){
-//        std::cout << s[i];
-//    }
-//    return NULL
-//
-//}
+using namespace std;
 
-void doubleSwap(std::string& s, const char c1, const char c2){
-    /*Write a function to replace all instances of character c1 with character c2 and vice versa.*/
-    for(int i =0; i<s.size(); ++i){
-//        std::cout << s.substr(i) + '\n';
-        if (s.at(i)==c1)
-            s[i] = c2; 
-            //printf("%c", c1);
-    }
-}
+class LedMatrix{
+    public:
+        LedMatrix(){};
+        unsigned char matrix[NLEDS][3] = {{1,2,3}, {1,2,3}};
+        // use << operator
+        void print(){
+            cout << "se entra en print\n";
+            for(unsigned int i=0; i<NLEDS; i++){
+                for(unsigned char j=0; j<3; j++){
+                    cout << matrix[i][j]; 
+                    printf("%d\t",matrix[i][j]);
+                }
+                printf("\n");
+            }
+        };
+};
 
 int main() {
-    std::cout << "Hola mundito!\n";
-    std::string  s1 {"que pasa tio"};
-    doubleSwap(s1, 'a', 'e');
-    std::cout << s1;
+    cout << "************************\n";
+    cout << "*** Command Renderer ***\n";
+    cout << "************************\n\n";
+
+    LedMatrix led_matrix;
+    led_matrix.print();
+
     return 0;
 }
