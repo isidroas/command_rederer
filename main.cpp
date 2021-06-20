@@ -13,6 +13,12 @@ struct color {
   unsigned char blue;
 };
 
+struct color_hsv {
+  float hue;
+  float saturation;
+  float value;
+};
+
 class LedMatrix {
 public:
   LedMatrix(){};
@@ -21,8 +27,7 @@ public:
   void print() {
     for (unsigned int i = 0; i < NLEDS; i++) {
       for (unsigned char j = 0; j < 3; j++) {
-        cout << matrix[i][j];
-        printf("%d\t", matrix[i][j]);
+        printf("%u\t", (unsigned int)matrix[i][j]);
       }
       printf("\n");
     }
@@ -36,11 +41,43 @@ public:
       matrix[i][1] = color_aux.green;
       matrix[i][2] = color_aux.blue;
     }
+  };
+
+  void fill(struct color_hsv hsv) {
+    struct color color_aux;
+    HSVtoRGB(color_aux, hsv);
+    fill(color_aux);
+  }
+
+  void increase_hsv(const struct color_hsv & dhsv){
+    struct color c;
+    struct color_hsv hsv;
+    for (unsigned int i = 0; i < get_size(); i++) {
+      c.red = matrix[i][0];
+      c.green = matrix[i][1];
+      c.blue = matrix[i][2];
+      RGBtoHSV(c, hsv);
+      hsv.hue += dhsv.value;
+      hsv.saturation += dhsv.saturation;
+      hsv.value += dhsv.value;
+      HSVtoRGB(c, hsv);
+      matrix[i][0] = c.red;
+      matrix[i][1] = c.green;
+      matrix[i][2] = c.blue;
+    }
   }
 
 private:
-  void RGBtoHSV(float &fR, float &fG, float fB, float &fH, float &fS,
-                float &fV) {
+  void RGBtoHSV(const struct color &c, struct color_hsv &hsv) {
+
+    float fR = (float)c.red / 255.0;
+    float fG = (float)c.green / 255.0;
+    float fB = (float)c.blue / 255.0;
+
+    float &fH = hsv.hue;
+    float &fS = hsv.saturation;
+    float &fV = hsv.value;
+
     float fCMax = max(max(fR, fG), fB);
     float fCMin = min(min(fR, fG), fB);
     float fDelta = fCMax - fCMin;
@@ -87,8 +124,16 @@ private:
     \param fV Hue component, used as input, range: [0, 1]
 
   */
-  void HSVtoRGB(float &fR, float &fG, float &fB, float &fH, float &fS,
-                float &fV) {
+  void HSVtoRGB(struct color &c, const struct color_hsv &hsv) {
+
+    const float &fH = hsv.hue;
+    const float &fS = hsv.saturation;
+    const float &fV = hsv.value;
+
+    float fR = 0;
+    float fG = 0;
+    float fB = 0;
+
     float fC = fV * fS; // Chroma
     float fHPrime = fmod(fH / 60.0, 6);
     float fX = fC * (1 - fabs(fmod(fHPrime, 2) - 1));
@@ -127,6 +172,10 @@ private:
     fR += fM;
     fG += fM;
     fB += fM;
+
+    c.red = fR * 255.0;
+    c.green = fG * 255.0;
+    c.blue = fB * 255.0;
   }
 };
 
@@ -141,6 +190,17 @@ int main() {
     0, 50, 200
   };
   led_matrix.fill(some_color);
+  led_matrix.print();
+
+  struct color_hsv some_hsv {
+    65.0, 0.4, 0.35
+  };
+  led_matrix.fill(some_hsv);
+  led_matrix.print();
+  struct color_hsv dhsv {
+    5.0, 0.1, 0.1
+  };
+  led_matrix.increase_hsv(dhsv);
   led_matrix.print();
 
   return 0;
