@@ -3,6 +3,17 @@
 #include <cstdlib>
 #include <iostream>
 #include <vector>
+
+// for file open
+//#include <unistd.h>
+//#include <sys/types.h>
+//#include <sys/stat.h>
+//#include <fcntl.h>
+
+// C++ way
+#include <fstream>
+#include <cstring>
+
 #define NLEDS 20
 
 using namespace std;
@@ -49,7 +60,7 @@ public:
     fill(color_aux);
   }
 
-  void increase_hsv(const struct color_hsv & dhsv){
+  void increase_hsv(const struct color_hsv &dhsv) {
     struct color c;
     struct color_hsv hsv;
     for (unsigned int i = 0; i < get_size(); i++) {
@@ -65,6 +76,33 @@ public:
       matrix[i][1] = c.green;
       matrix[i][2] = c.blue;
     }
+  }
+
+//  void send_led_matrix(){
+//      char str1[100];
+//      int fd = open("/dev/rpmsg_pru30",O_APPEND);
+//      if (fd==-1){
+//          printf("Error abriendo el archivo\n");
+//          exit(-1);
+//      }
+//      for (unsigned int i = 0; i < get_size(); i++){
+//          // TODO: investigar una forma C++ más compacta de hacer esto
+//          sprintf(str1, "%d %d %d %d\n", i, matrix[i][0], matrix[i][1], matrix[i][2]);
+//          write(fd, str1, sizeof(str1));
+//      }
+//      sprintf(str1, "%d %d %d %d\n");
+//      // send render command
+//  }
+  void send_matrix(){
+      std::ofstream  file;
+      file.open("/dev/rpmsg_pru30", std::ios_base::app);
+      if (file.fail())
+          throw std::ios_base::failure(std::strerror(errno));
+      for (unsigned int i = 0; i < get_size(); i++){
+            file << i << " " << matrix[i][0] << " "  << matrix[i][1] << " "  << matrix[i][2] << "\n" ;
+      }
+      // send render command
+      file <<  "-1 0 0 0\n" ;
   }
 
 private:
@@ -202,6 +240,7 @@ int main() {
   };
   led_matrix.increase_hsv(dhsv);
   led_matrix.print();
+  led_matrix.send_matrix();
 
   return 0;
 }
