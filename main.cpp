@@ -5,14 +5,11 @@
 #include <vector>
 
 // for file open
-//#include <unistd.h>
-//#include <sys/types.h>
-//#include <sys/stat.h>
-//#include <fcntl.h>
+#include <unistd.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
 
-// C++ way
-#include <cstring>
-#include <fstream>
 
 #define NLEDS 20
 
@@ -81,18 +78,23 @@ public:
   }
 
   void send_matrix() {
-    std::ofstream file;
-    file.open("/dev/rpmsg_pru30", std::ios_base::app);
-    if (file.fail())
-      throw std::ios_base::failure(std::strerror(errno));
+    // TODO: para escribir o leer en dispositivos es recomendable usar las funciones de más bajo nivel open y write
+
+    int fd = open("/dev/rpmsg_pru30", O_WRONLY);
+//    int fd = open("./output.txt", O_WRONLY);
+    if (fd==-1){
+        cout << "error al abrir el fichero\n";
+        exit(-1);
+    }
+    char str1[50];
     for (unsigned int i = 0; i < get_size(); i++) {
       // TODO: fix this not printing the number
-      file << i << " " << std::to_string(matrix[i][0]) << " "
-           << std::to_string(matrix[i][1]) << " "
-           << std::to_string(matrix[i][2]) << "\n";
+      int l = sprintf(str1, "%d %d %d %d\n", i, matrix[i][0], matrix[i][1], matrix[i][1]);
+      write(fd,str1, l);
     }
     // send render command
-    file << "-1 0 0 0\n";
+    write(fd,"-1 0 0 0\n", 9);
+    close(fd);
   }
 
 private:
@@ -230,6 +232,13 @@ int main() {
   };
   led_matrix.increase_hsv(dhsv);
   led_matrix.print();
+  led_matrix.send_matrix();
+  sleep(1);
+
+  dhsv =  {
+    0, 0, 0.2
+  };
+  led_matrix.increase_hsv(dhsv);
   led_matrix.send_matrix();
 
   return 0;
