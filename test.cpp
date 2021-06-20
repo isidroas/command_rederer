@@ -11,8 +11,8 @@
 //#include <fcntl.h>
 
 // C++ way
-#include <cstring>
 #include <fstream>
+#include <cstring>
 
 #define NLEDS 20
 
@@ -38,9 +38,7 @@ public:
   void print() {
     for (unsigned int i = 0; i < NLEDS; i++) {
       for (unsigned char j = 0; j < 3; j++) {
-        std::cout << std::to_string(matrix[i][0]) << " "
-                  << std::to_string(matrix[i][1]) << " "
-                  << std::to_string(matrix[i][2]) << "\n";
+        printf("%u\t", (unsigned int)matrix[i][j]);
       }
       printf("\n");
     }
@@ -80,19 +78,33 @@ public:
     }
   }
 
-  void send_matrix() {
-    std::ofstream file;
-    file.open("/dev/rpmsg_pru30", std::ios_base::app);
-    if (file.fail())
-      throw std::ios_base::failure(std::strerror(errno));
-    for (unsigned int i = 0; i < get_size(); i++) {
-      // TODO: fix this not printing the number
-      file << i << " " << std::to_string(matrix[i][0]) << " "
-           << std::to_string(matrix[i][1]) << " "
-           << std::to_string(matrix[i][2]) << "\n";
-    }
-    // send render command
-    file << "-1 0 0 0\n";
+//  void send_led_matrix(){
+//      char str1[100];
+//      int fd = open("/dev/rpmsg_pru30",O_APPEND);
+//      if (fd==-1){
+//          printf("Error abriendo el archivo\n");
+//          exit(-1);
+//      }
+//      for (unsigned int i = 0; i < get_size(); i++){
+//          // TODO: investigar una forma C++ más compacta de hacer esto
+//          sprintf(str1, "%d %d %d %d\n", i, matrix[i][0], matrix[i][1], matrix[i][2]);
+//          write(fd, str1, sizeof(str1));
+//      }
+//      sprintf(str1, "%d %d %d %d\n");
+//      // send render command
+//  }
+  void send_matrix(){
+      std::ofstream  file;
+      file.open("/dev/rpmsg_pru30", std::ios_base::app);
+      if (file.fail())
+          throw std::ios_base::failure(std::strerror(errno));
+      for (unsigned int i = 0; i < get_size(); i++){
+            // TODO: fix this not printing the number
+            std::cout << i << " " << matrix[i][0] << " "  << matrix[i][1] << " "  << matrix[i][2] << "\n" ;
+            file << i << " " << matrix[i][0] << " "  << matrix[i][1] << " "  << matrix[i][2] << "\n" ;
+      }
+      // send render command
+      file <<  "-1 0 0 0\n" ;
   }
 
 private:
