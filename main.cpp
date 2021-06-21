@@ -89,7 +89,7 @@ public:
     char str1[50];
     for (unsigned int i = 0; i < get_size(); i++) {
       // TODO: fix this not printing the number
-      int l = sprintf(str1, "%d %d %d %d\n", i, matrix[i][0], matrix[i][1], matrix[i][1]);
+      int l = sprintf(str1, "%d %d %d %d\n", i, matrix[i][0], matrix[i][1], matrix[i][2]);
       write(fd,str1, l);
     }
     // send render command
