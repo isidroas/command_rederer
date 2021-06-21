@@ -11,7 +11,7 @@
 #include <fcntl.h>
 
 
-#define NLEDS 20
+#define NLEDS 30
 
 using namespace std;
 
@@ -239,6 +239,27 @@ int main() {
     0, 0, 0.2
   };
   led_matrix.increase_hsv(dhsv);
+  led_matrix.send_matrix();
+
+  sleep(5);
+  some_color =  {
+    255, 0, 0
+  };
+  led_matrix.fill(some_color);
+  led_matrix.send_matrix();
+
+  sleep(5);
+  some_color =  {
+    0, 0, 255 
+  };
+  led_matrix.fill(some_color);
+  led_matrix.send_matrix();
+
+  sleep(5);
+  some_color =  {
+    0, 255, 0
+  };
+  led_matrix.fill(some_color);
   led_matrix.send_matrix();
 
   return 0;
