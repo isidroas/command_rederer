@@ -12,8 +12,10 @@
 using namespace std;
 
 
-LedMatrix::LedMatrix() {
-    driverInterface = DriverInterface();
+LedMatrix::LedMatrix(): driverInterface() {
+    // Eliminé la siguiente línea porque esto es inicializar por asignación. 
+    // El problema que se genera es que el destructor se ejecuta al principio
+//    driverInterface = DriverInterface();
 }
 
 void LedMatrix::print() {
