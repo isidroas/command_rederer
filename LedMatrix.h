@@ -1,4 +1,5 @@
 #define NLEDS 30
+#include "DriverInterface.cpp"
 
 
 struct color {
@@ -15,7 +16,7 @@ struct color_hsv {
 
 class LedMatrix {
 public:
-  LedMatrix(){};
+  LedMatrix();
   // TODO: use << operator
   void print();
   unsigned int get_size() { return NLEDS; }
@@ -34,4 +35,6 @@ private:
 
   void HSVtoRGB(struct color &c, const struct color_hsv &hsv);
   unsigned char matrix[NLEDS][3] = {{1, 2, 3}, {1, 2, 3}};
+  DriverInterface driverInterface;
+
 };

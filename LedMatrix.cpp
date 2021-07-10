@@ -4,11 +4,6 @@
 #include <iostream>
 #include <vector>
 
-// for file open
-#include <unistd.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <fcntl.h>
 #include "LedMatrix.h"
 
 
@@ -17,6 +12,9 @@
 using namespace std;
 
 
+LedMatrix::LedMatrix() {
+    driverInterface = DriverInterface();
+}
 
 void LedMatrix::print() {
   for (unsigned int i = 0; i < NLEDS; i++) {
@@ -63,23 +61,7 @@ void LedMatrix::increase_hsv(const struct color_hsv &dhsv) {
 }
 
 void LedMatrix::send_matrix() {
-  // TODO: para escribir o leer en dispositivos es recomendable usar las funciones de más bajo nivel open y write
-
-  //int fd = open("/dev/rpmsg_pru30", O_WRONLY);
-  int fd = open("./output.txt", O_WRONLY);
-  if (fd==-1){
-      cout << "error al abrir el fichero\n";
-      exit(-1);
-  }
-  char str1[50];
-  for (unsigned int i = 0; i < get_size(); i++) {
-    // TODO: fix this not printing the number
-    int l = sprintf(str1, "%d %d %d %d\n", i, matrix[i][0], matrix[i][1], matrix[i][2]);
-    write(fd,str1, l);
-  }
-  // send render command
-  write(fd,"-1 0 0 0\n", 9);
-  close(fd);
+    driverInterface.write_matrix(matrix, get_size());
 }
 
 void LedMatrix::RGBtoHSV(const struct color &c, struct color_hsv &hsv) {
