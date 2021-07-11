@@ -30,30 +30,26 @@ if __name__ == "__main__":
     
 
 
-    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+    with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as s:
         s.bind((HOST, PORT))
-        s.listen(1)
         while True:
-            conn, addr = s.accept()
-            with conn:
-                #print('Connected by', addr)
-                #while True:
-                #while True:
-                data = conn.recv(1024)
-                #print('Received', repr(data))
-                if  data:
-                    conn.sendall(b'OK')
-                    str_ = data.decode()
-                    res = re.match(r'(-?\d+) (\d+) (\d+) (\d+)', str_)
-                    if res:
-                        index = int(res[1])
-                        red = int(res[2])
-                        green = int(res[3])
-                        blue = int(res[4])
-                        if index == -1:
-                            # some code to reder strip
-                            print_strip(leds)
-                        else:
-                            leds[index] = Color(red, green, blue)
-                    
+            try:
+                data, addr = s.recvfrom(1024)
+            except KeyboardInterrupt:
+                print("\nDetected keyboard interrup, exiting")
+                break
+            if  data:
+                str_ = data.decode()
+                res = re.match(r'(-?\d+) (\d+) (\d+) (\d+)', str_)
+                if res:
+                    index = int(res[1])
+                    red = int(res[2])
+                    green = int(res[3])
+                    blue = int(res[4])
+                    if index == -1:
+                        # some code to reder strip
+                        print_strip(leds)
+                    else:
+                        leds[index] = Color(red, green, blue)
+                
     print()

@@ -14,24 +14,21 @@ int main() {
   };
   led_matrix.fill(some_color);
   led_matrix.send_matrix();
-//  led_matrix.print();
   
 
-//  sleep(5);
-//  some_color =  {
-//    0, 255, 0 
-//  };
-//  led_matrix.fill(some_color);
-//  led_matrix.send_matrix();
-//  led_matrix.print();
-//
-//  sleep(5);
-//  some_color =  {
-//    0, 0, 255 
-//  };
-//  led_matrix.fill(some_color);
-//  led_matrix.send_matrix();
-//  led_matrix.print();
+  sleep(5);
+  some_color =  {
+    0, 255, 0 
+  };
+  led_matrix.fill(some_color);
+  led_matrix.send_matrix();
+
+  sleep(5);
+  some_color =  {
+    0, 0, 255 
+  };
+  led_matrix.fill(some_color);
+  led_matrix.send_matrix();
 
 //  struct color_hsv some_hsv {
 //    65.0, 0.4, 0.35
