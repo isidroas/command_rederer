@@ -1,1 +1,3 @@
 - Make dynamic number of leds
+- Communication between command_renderer and led_simulator.py
+    - It would be ideal if can be the same interface than the real hardware (file device)

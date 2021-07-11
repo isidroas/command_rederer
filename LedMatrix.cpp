@@ -12,9 +12,12 @@
 using namespace std;
 
 
+// Using initializer list
 LedMatrix::LedMatrix(): driverInterface() {
     // Eliminé la siguiente línea porque esto es inicializar por asignación. 
     // El problema que se genera es que el destructor se ejecuta al principio
+    // Supongo que cuando se sale de esta función.
+    // Esta opción es flexible ya que admite los mismos argumentos que el costructor
 //    driverInterface = DriverInterface();
 }
 
