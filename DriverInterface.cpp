@@ -46,13 +46,11 @@ DriverInterface::~DriverInterface() {
 }
 
 void DriverInterface::write_matrix(unsigned char matrix[30][3], unsigned int size) {
-    cout << "[DriverInterface::write_matrix] matrix[0][0]" << int(matrix[0][1]) << endl;
 
 
   char str1[50];
   for (unsigned int i = 0; i < size; i++) {
     int l = sprintf(str1, "%d %d %d %d\n", int(i), matrix[i][0], matrix[i][1], matrix[i][2]);
-    cout << str1;
     #ifdef SIMULATE
         sendto(sockfd, (const char *)str1, l,
             MSG_CONFIRM, (const struct sockaddr *) &servaddr, 

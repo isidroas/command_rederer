@@ -5,6 +5,7 @@
 #include <vector>
 
 #include "LedMatrix.h"
+#include <time.h>
 
 
 #define NLEDS 30
@@ -40,6 +41,14 @@ void LedMatrix::fill(struct color color_aux) {
     matrix[i][2] = color_aux.blue;
   }
 };
+
+void LedMatrix::setPixel(unsigned int pos, struct color color_aux){
+    matrix[pos][0] = color_aux.red;
+    matrix[pos][1] = color_aux.green;
+    matrix[pos][2] = color_aux.blue;
+};
+
+//void setPixel
 
 void LedMatrix::fill(struct color_hsv hsv) {
   struct color color_aux;
@@ -177,4 +186,44 @@ void LedMatrix::HSVtoRGB(struct color &c, const struct color_hsv &hsv) {
   c.red = fR * 255.0;
   c.green = fG * 255.0;
   c.blue = fB * 255.0;
+}
+
+unsigned int LedMatrix::get_millis() {
+    struct timespec tm;
+    int res = clock_gettime(CLOCK_REALTIME, &tm);
+    if (res==-1){
+        cout << "error in gettime" << endl;
+        exit(-1);
+    }
+    return  tm.tv_sec*1e3 + tm.tv_nsec/1e6;
+}
+
+void LedMatrix::fill_transition_pos( unsigned int duration_ms, unsigned int init_pos, unsigned int end_pos) {
+    // TODO: put target color
+    if (end_pos==0){
+        end_pos = get_size();
+    }
+    unsigned int pos = map_from_one_range_to_another( (double)((double)get_millis()-(double)time_base), 0, duration_ms, init_pos, end_pos);
+    struct color c {100,100,100};
+    for (unsigned int i=0; i< get_size(); i++){
+        if (i<pos){
+        setPixel(i, c);
+
+        }
+
+    }
+}
+
+float LedMatrix::map_from_one_range_to_another(double in ,float  in_min,float  in_max,float  out_min,float  out_max){
+   float res = out_min + (out_max-out_min)/(in_max-in_min)*(in - in_min);
+   if (res>out_max){
+       res=out_max;
+   }
+   else if(res<out_min){
+       res = out_min;
+   }
+   return res;
+}
+void LedMatrix::reset_time_base(){
+    time_base = get_millis();
 }

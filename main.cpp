@@ -8,27 +8,38 @@ int main() {
   cout << "*** Command Renderer ***\n";
   cout << "************************\n\n";
 
+
   LedMatrix led_matrix;
+
+
   struct color some_color {
-    255, 0, 0
+    0, 0, 0
   };
   led_matrix.fill(some_color);
   led_matrix.send_matrix();
+
+  led_matrix.reset_time_base();
+  while(true){
+    led_matrix.fill_transition_pos(1000);
+//    sleep(1);
+    led_matrix.send_matrix();
+  }
+
   
 
-  sleep(5);
-  some_color =  {
-    0, 255, 0 
-  };
-  led_matrix.fill(some_color);
-  led_matrix.send_matrix();
+  //sleep(5);
+  //some_color =  {
+  //  0, 255, 0 
+  //};
+  //led_matrix.fill(some_color);
+  //led_matrix.send_matrix();
 
-  sleep(5);
-  some_color =  {
-    0, 0, 255 
-  };
-  led_matrix.fill(some_color);
-  led_matrix.send_matrix();
+  //sleep(5);
+  //some_color =  {
+  //  0, 0, 255 
+  //};
+  //led_matrix.fill(some_color);
+  //led_matrix.send_matrix();
 
 //  struct color_hsv some_hsv {
 //    65.0, 0.4, 0.35
